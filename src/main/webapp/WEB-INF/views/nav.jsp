@@ -1,7 +1,5 @@
-<!-- 타임리프가 아닌 jsp를 사용할경우 굳이 사용할 필요가없음  -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-깃허브 테스트 입니다.
+<div>
+	<div>
+		<a href="/">목록</a>
+		<a href="/board_write.do">글 작성</a>
+	</div>
+</div>
 </body>
 </html>

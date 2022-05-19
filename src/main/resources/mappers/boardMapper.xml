@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.model.BoardMapper">  
+ 	<!-- <select id="listAll" resultType="BoardDTO">
+ 		select * from board order by board_no
+ 	</select> -->
+ 	
+ 	<insert id="write">
+ 		insert into board values(board_seq.nextval, #{board_writer}, #{board_title}, #{board_cont}, #{board_pwd}, default, sysdate )
+ 	</insert>
+ 	<select id="read" resultType="BoardDTO" parameterType="int">
+ 		select * from board where board_no=#{board_no}
+ 	</select>
+ 	<update id="hitUpdate"> update board set board_hit=board_hit+1 where  board_no=#{board_no} </update>
+	<update id="update"> update board set board_title=#{board_title}, board_cont=#{board_cont}, board_pwd=#{board_pwd}  where board_no=#{board_no}</update>
+	<delete id="delete">delete from board where board_no=#{board_no}</delete>
+	<select id="listAll" resultType="BoardDTO" parameterType="com.my.model.SearchCriteria">
+		SELECT  *	
+		 FROM ( 
+		        SELECT board_no, 
+		               board_writer, 
+		               board_title, 
+		               board_cont, 
+		               board_pwd,
+		               board_hit,
+		               board_regdate,
+		               ROW_NUMBER() OVER(ORDER BY board_no DESC) AS RNUM
+		         FROM board 
+		         WHERE 1=1 
+		         <include refid="search"></include> <!-- include refid= 반복되는 쿼리를 id값을 지정하여 간단하게 쓴다. 중복처리 -->
+		                       ) 
+		WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+		ORDER BY board_no DESC
+	</select>
+	<select id="listCount" parameterType="com.my.model.SearchCriteria" resultType="int">	
+		SELECT COUNT(board_no)
+		  FROM board
+		   WHERE 1=1
+		<include refid="search"></include>	
+		 AND board_no > 0	
+	</select>
+	
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND board_title LIKE '%' || #{keyword} || '%'</if> <!-- sql의 ||은 문자나 컬럼을 붙혀준다. -->
+			<if test="searchType == 'c'.toString()">AND board_cont LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND board_writer LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (board_title LIKE '%' || #{keyword} || '%') or (board_cont LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+</mapper>
