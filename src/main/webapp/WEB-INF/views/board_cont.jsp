@@ -1,11 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
 <title>Insert title here</title>
 </head>
 <script type="text/javascript">
@@ -38,37 +46,63 @@
 		// 목록
 		$(".list_btn").on("click", function(){
 		
-				location.href = "/?page=${scri.page}"
+				location.href = "/board?page=${scri.page}"
 								+"&perPageNum=${scri.perPageNum}"
 								+"&searchType=${scri.searchType}&keyword=${scri.keyword}";
-				})	
+				})
+				
+		$(".replyWriteBtn").on("click", function(){
+			  var formObj = $("form[name='replyForm']");
+			  formObj.attr("action", "/replyWrite");
+			  formObj.submit();
+			});
+		//댓글 수정 View
+		$(".replyUpdateBtn").on("click", function(){
+			location.href = "/replyUpdateView?board_no=${cont.board_no}"
+							+ "&page=${scri.page}"
+							+ "&perPageNum=${scri.perPageNum}"
+							+ "&searchType=${scri.searchType}"
+							+ "&keyword=${scri.keyword}"
+							+ "&rno="+$(this).attr("data-rno");
+		});
+				
+		//댓글 삭제 View
+		$(".replyDeleteBtn").on("click", function(){
+			location.href = "/replyDeleteView?board_no=${cont.board_no}"
+				+ "&page=${scri.page}"
+				+ "&perPageNum=${scri.perPageNum}"
+				+ "&searchType=${scri.searchType}"
+				+ "&keyword=${scri.keyword}"
+				+ "&rno="+$(this).attr("data-rno");
+		});
 
 	})
 </script>
 
 <body>
-	<div align="center">
-		<hr width="500" color="tomato">
-	      <h3>Board 테이블 사원 상세 내역</h3>
-	   <hr width="500" color="tomato">
-	   <br /><br />
+<%@include file="header.jsp" %>
+
+	<div class="container">
+		
 	   <div>
 				<%@include file="nav.jsp" %>
 		</div>
 		<br />
-	   <form name="readForm" role="form" method="post">
+		
+	<section id="container">
+	   <form name="readForm" role="form" method="post"><!-- name=""이 dto 이름과 같아야함. -->
 			<input type="hidden" id="board_no" name="board_no" value="${cont.board_no}" /><!--${cont.getBoard_no()} 써도 똑같음  -->
  			<input type="hidden" id="page" name="page" value="${scri.page}"> 
  			<input type="hidden" id="perPageNum" name="perPageNum" value="${scri.perPageNum}"> 
   			<input type="hidden" id="searchType" name="searchType" value="${scri.searchType}"> 
   			<input type="hidden" id="keyword" name="keyword" value="${scri.keyword}"> 
 		</form>
-	   <table border="1" cellspacing="0" width="400">
+	   <table class="table table-borderless">
 	   <c:set var="dto" value="${cont }"></c:set>
 	   <c:if test="${!empty dto }">	      
-	      	 <tr>
-	      	    <th colspan="2" align="center">
-	      	      <h3>${dto.board_no } 님 게시물 상세 내역</h3>
+	      	 <tr >
+	      	    <th colspan="2" align="left">
+	      	      <h4>${dto.board_no } 님 게시물 상세 내역</h4>
 	      	 	</th>
 	      	 </tr>
 	      	 <tr>
@@ -82,7 +116,7 @@
 	      	 <tr>
 	      	 	<th>글내용</th>
 	      	 	<td>
-	      	 	   <textarea rows="8" cols="30" readonly>${dto.board_cont } </textarea>
+	      	 	   <textarea rows="8" cols="30" readonly class="form-control">${dto.board_cont } </textarea>
 	      	 	</td>
 	      	 </tr>
 	      	 <tr>
@@ -105,14 +139,64 @@
 	      </c:if>
 	      <tr>
 	      	<td colspan="2" align="right">
-	      		<button type="submit" class="update_btn">수정</button>
+	      		<button type="submit" class="update_btn btn btn-warning">수정</button>
 	            &nbsp;&nbsp;&nbsp;
-	            <button type="submit" class="delete_btn">삭제</button>
+	            <button type="submit" class="delete_btn btn btn-danger">삭제</button>
 	            &nbsp;&nbsp;&nbsp;
-	            <button type="submit" class="list_btn">목록</button>      	             					 	  
+	            <button type="submit" class="list_btn btn btn-primary">목록</button>      	             					 	  
 	      	</td>
 	      </tr>
 	   </table>
+	   
+	   <!-- 댓글 -->
+		<div id="reply">
+		  <ol class="replyList">
+		    <c:forEach items="${replyList}" var="replyList">
+		      <li>
+		        <p>
+		        작성자 : ${replyList.writer}<br />
+		        작성 날짜 :  <fmt:formatDate value="${replyList.regdate}" pattern="yyyy-MM-dd" />
+		        </p>
+		
+		        <p>${replyList.content}</p>
+		        <div>
+				  <button type="button" class="replyUpdateBtn btn btn-warning" data-rno="${replyList.rno}">수정</button>
+				  <button type="button" class="replyDeleteBtn btn btn-danger" data-rno="${replyList.rno}">삭제</button>
+				</div>
+		      </li>
+		    </c:forEach>   
+		  </ol>
+		</div>
+		
+		<form name="replyForm" method="post" class="form-horizotal">
+		  <input type="hidden" id="board_no" name="board_no" value="${cont.board_no}" />
+		  <input type="hidden" id="page" name="page" value="${scri.page}"> 
+		  <input type="hidden" id="perPageNum" name="perPageNum" value="${scri.perPageNum}"> 
+		  <input type="hidden" id="searchType" name="searchType" value="${scri.searchType}"> 
+		  <input type="hidden" id="keyword" name="keyword" value="${scri.keyword}"> 
+		
+		  <div class="form-group">
+			    <label for="writer" class="col-sm-2 control-label">댓글 작성자</label>
+			    <div class="col-sm-10">
+			    	<input type="text" id="writer" name="writer" class="form-control"/>
+			    </div>			    
+		  </div>
+		  <div class="form-group">
+			    <label for="content" class="col-sm-2 control-label">댓글 내용</label>
+			    <div class="col-sm-10">
+			    	<input type="text" id="content" name="content" class="form-control"/>
+			    </div>			    
+		  </div>
+		  <div class="form-group">
+		  	<div class="col-sm-offset-2 col-sm-10">
+		 	 <button type="button" class="replyWriteBtn btn btn-success" >작성</button> <!-- 풋터화면안으로 들어가서 작동이안됨 수정해야함 -->
+		 	 </div>
+		  </div>		  
+		</form>
+		</section>
 	</div>
+	
+	
+<%@include file="footer.jsp" %> 
 </body>
 </html>

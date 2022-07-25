@@ -44,6 +44,7 @@
 		
 	</script>
 <body>
+<%@include file="header.jsp" %>
 	<div align="center">
 	   <hr width="50%" color="skyblue">	
 	      <h3>BOARD1 테이블에 게시물 수정 폼</h3>
@@ -90,5 +91,6 @@
 	      </table>
 	   </form>
 	</div>
+<%@include file="footer.jsp" %>
 </body>
 </html>

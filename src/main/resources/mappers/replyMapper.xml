@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.mapper.ReplyMapper">
+
+<!-- 댓글 조회 -->
+	<select id="readReply" resultType="ReplyDTO">
+    	SELECT
+    		  RNO, CONTENT, WRITER, REGDATE
+    	 FROM BOARD_REPLY
+    	WHERE BOARD_NO = #{board_no}
+	</select>
+<!--댓글 작성  -->	
+<insert id="writeReply">
+INSERT INTO BOARD_REPLY(
+	BOARD_NO
+	, RNO
+	, CONTENT
+	, WRITER
+)
+VALUES(    #{board_no}
+	, BOARD_REPLY_SEQ.NEXTVAL
+	, #{content}
+	, #{writer}	)
+</insert>
+<!-- 댓글 수정 -->
+	<update id="updateReply" parameterType="com.my.dto.ReplyDTO">
+		UPDATE BOARD_REPLY SET CONTENT = #{content}
+		WHERE RNO = #{rno}
+	</update>
+
+<!-- 댓글 삭제 -->
+	<delete id="deleteReply" parameterType="com.my.dto.ReplyDTO">
+		DELETE FROM BOARD_REPLY
+		WHERE RNO = #{rno}
+	</delete>
+	
+<!-- 선택된 댓글 조회 -->
+	<select id="selectReply" resultType="ReplyDTO">
+		SELECT
+				BOARD_NO
+			  , RNO
+			  , CONTENT
+			  , WRITER
+			  , REGDATE
+		  FROM BOARD_REPLY
+		 WHERE RNO = #{rno}
+	</select>
+</mapper>

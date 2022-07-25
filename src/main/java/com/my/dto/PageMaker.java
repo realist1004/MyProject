@@ -1,4 +1,4 @@
-package com.my.model;
+package com.my.dto;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

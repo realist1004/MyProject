@@ -1,17 +1,23 @@
 package com.my.service;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.my.model.BoardMapper;
-import com.my.model.Criteria;
-import com.my.model.SearchCriteria;
-import com.my.model.BoardDTO;
+import com.my.dto.BoardDTO;
+import com.my.dto.SearchCriteria;
+import com.my.mapper.BoardMapper;
+import com.my.util.FileUtils;
 
 @Service
 public class  BoardServiceImpl implements BoardService{
+	@Resource(name = "fileUtils")
+	private FileUtils fileUtils;
 	@Autowired
 	private BoardMapper boardMapper;
 	@Override
@@ -42,9 +48,14 @@ public class  BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public void write(BoardDTO dto) throws Exception {
+	public void write(BoardDTO dto, MultipartHttpServletRequest boardRequest) throws Exception {
 		boardMapper.write(dto);
 		
+		List<Map<String, Object>> list = fileUtils.parselnertFileInfo(dto, boardRequest);
+		int size = list.size();
+		for(int i=0; i<size; i++) {
+			boardMapper.insertFile(list.get(i));
+		}
 	}
 
 	@Override

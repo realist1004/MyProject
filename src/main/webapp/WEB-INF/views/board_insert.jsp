@@ -5,8 +5,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<title>Insert title here</title>
+<!-- jquery 최신버전  -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<title>게시판 글 작성</title>
 </head>
 <script type="text/javascript">
 	 	$(document).ready(function(){
@@ -32,7 +37,8 @@
 	</script>
 
 <body>
-	<div align="center">
+<%@include file="header.jsp" %>
+<div align="center">
 	   <hr width="50%" color="skyblue">
 	      <h3>BOARD 테이블에 게시물 글쓰기 폼</h3>
 	   <hr width="50%" color="skyblue">
@@ -41,8 +47,11 @@
 				<%@include file="nav.jsp" %>
 		</div>
 		<br />
-	   <form name="writeForm" method="post" action="/board_writeOk.do">
+	<section id="container">
+	   <form name="writeForm" method="post" action="/board_writeOk.do" enctype="multipart/form-data">
 	      <table border="1" cellspacing="0" width="400">
+	      	<tbody>
+	      		<c:if test="${member.userId != null }">
 	         <tr>
 	            <th>작성자</th>
 	         	<td> <input type="text"  name="board_writer" class="chk" title="작성자를 입력하세요." /> </td>
@@ -58,6 +67,11 @@
 	         	</td>
 	         </tr>
 	         <tr>
+	         	<td>
+	         		<input type="file" name="file">
+	         	</td>
+	         </tr>	         
+	         <tr>
 	         	<th>비밀번호</th>
 	         	<td> <input type="password"  name="board_pwd" class="chk" title="비밀번호를 입력하세요."/> </td>
 	         </tr>
@@ -67,8 +81,15 @@
 	         	   <input type="reset" value="취소" />
 	         	</td>
 	         </tr>
+	         </c:if>
+	         <c:if test="${member.userId == null }">
+	         	<p>로그인 후에 작성하실 수 있습니다.</p>
+	         </c:if>	
+	         </tbody>
 	      </table>
 	   </form>
+	   </section>
 	</div>
+<%@include file="footer.jsp" %>
 </body>
 </html>

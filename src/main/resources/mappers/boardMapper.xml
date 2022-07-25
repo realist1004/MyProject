@@ -2,13 +2,16 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.my.model.BoardMapper">  
+<mapper namespace="com.my.mapper.BoardMapper">  
  	<!-- <select id="listAll" resultType="BoardDTO">
  		select * from board order by board_no
  	</select> -->
  	
- 	<insert id="write">
- 		insert into board values(board_seq.nextval, #{board_writer}, #{board_title}, #{board_cont}, #{board_pwd}, default, sysdate )
+ 	<insert id="write" parameterType="com.my.dto.BoardDTO" useGeneratedKeys="true" keyProperty="board_no">
+ 		<selectKey keyProperty="board_no" resultType="int" order="BEFORE">
+ 			SELECT BOARD_SEQ.NEXTVAL FROM DUAL
+ 		</selectKey>
+ 		insert into board values(#{board_no}, #{board_writer}, #{board_title}, #{board_cont}, #{board_pwd}, default, sysdate )
  	</insert>
  	<select id="read" resultType="BoardDTO" parameterType="int">
  		select * from board where board_no=#{board_no}
@@ -16,7 +19,7 @@
  	<update id="hitUpdate"> update board set board_hit=board_hit+1 where  board_no=#{board_no} </update>
 	<update id="update"> update board set board_title=#{board_title}, board_cont=#{board_cont}, board_pwd=#{board_pwd}  where board_no=#{board_no}</update>
 	<delete id="delete">delete from board where board_no=#{board_no}</delete>
-	<select id="listAll" resultType="BoardDTO" parameterType="com.my.model.SearchCriteria">
+	<select id="listAll" resultType="BoardDTO" parameterType="com.my.dto.SearchCriteria">
 		SELECT  *	
 		 FROM ( 
 		        SELECT board_no, 
@@ -34,7 +37,7 @@
 		WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
 		ORDER BY board_no DESC
 	</select>
-	<select id="listCount" parameterType="com.my.model.SearchCriteria" resultType="int">	
+	<select id="listCount" parameterType="com.my.dto.SearchCriteria" resultType="int">	
 		SELECT COUNT(board_no)
 		  FROM board
 		   WHERE 1=1
@@ -50,4 +53,21 @@
 			<if test="searchType == 'tc'.toString()">AND (board_title LIKE '%' || #{keyword} || '%') or (board_cont LIKE '%' || #{keyword} || '%')</if>
 		</if>
 	</sql>
+	
+	<insert id="insertFile" parameterType="hashMap">
+		INSERT INTO BOARD_FILE(
+			FILE_NO,
+			BOARD_NO,
+			ORG_FILE_NAME,
+			STORED_FILE_NAME,
+			FILE_SIZE
+		)VALUES(
+			SEQ_BOARD_FILE_NO.NEXTVAL,
+			#{BOARD_NO},
+			#{ORG_FILE_NAME},
+			#{STORED_FILE_NAME},
+			#{FILE_SIZE}
+		)
+		
+	</insert>
 </mapper>
