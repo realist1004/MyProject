@@ -56,7 +56,7 @@
 	
 	<insert id="insertFile" parameterType="hashMap">
 		INSERT INTO BOARD_FILE(
-			FILE_NO,
+			FILE_NO, 
 			BOARD_NO,
 			ORG_FILE_NAME,
 			STORED_FILE_NAME,
@@ -70,4 +70,21 @@
 		)
 		
 	</insert>
+	<!-- 첨부파일 조회  -->
+	<select id="selectFileList" parameterType="int" resultType="hashMap">
+		SELECT FILE_NO,
+			   ORG_FILE_NAME,
+			   ROUND(FILE_SIZE/1024,1) AS FILE_SIZE
+		FROM   BOARD_FILE
+		WHERE  BOARD_NO	= #{BOARD_NO}
+		AND	   DEL_GB = 'N'	
+	</select>
+	<!--첨부파일 다운  -->
+	<select id="selectFileInfo" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			STORED_FILE_NAME,
+			ORG_FILE_NAME
+		FROM BOARD_FILE
+		WHERE FILE_NO = #{FILE_NO}
+	</select>
 </mapper>

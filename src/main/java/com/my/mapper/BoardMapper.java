@@ -20,6 +20,7 @@ public interface BoardMapper {
 	public void hitUpdate (int bno) throws Exception;
 	public void update (BoardDTO dto) throws Exception;
 	public void delete (int bno) throws Exception;
-	public void insertFile(Map<String, Object> map) throws Exception;
-	
+	public void insertFile(Map<String, Object> map) throws Exception; //첨부파일 업로드
+	public List<Map<String, Object>> selectFileList(int bno) throws Exception; // 첨부파일 조회
+	public Map<String, Object> selectFileInfo(Map<String, Object> map) throws Exception; // 첨부파일 다운로드
 }

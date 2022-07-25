@@ -1,6 +1,11 @@
 package com.my.controller;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +61,7 @@ public class BoardController {
 		boardService.write(dto, boardRequest);		
 		return "redirect:/board";//"redirect:Board_list.do";
 	}
-
+	// 게시판 조회
 	@RequestMapping("/board_cont.do")
 	public String cont(BoardDTO dto, @ModelAttribute("scri") SearchCriteria scri , Model model) throws Exception {
 		logger.info("read????");
@@ -67,6 +72,8 @@ public class BoardController {
 		List<ReplyDTO> replyList = replyService.readReply(dto.getBoard_no());
 		model.addAttribute("replyList", replyList);
 		
+		List<Map<String, Object>> fileList = boardService.selectFileList(dto.getBoard_no());
+		model.addAttribute("file", fileList);
 		return "board_cont";
 
 	}
@@ -169,5 +176,23 @@ public class BoardController {
 			rttr.addAttribute("keyword", scri.getKeyword());
 			
 			return "redirect:board_cont.do";
+		}
+		
+		//첨부파일 다운
+		@RequestMapping("/fileDown")
+		public void fileDown(@RequestParam Map<String, Object> map, HttpServletResponse response) throws Exception	{
+			Map<String, Object> resultMap = boardService.selectFileInfo(map);
+			String storedFileName = (String) resultMap.get("STORED_FILE_NAME");
+			String originalFileName = (String) resultMap.get("ORG_FILE_NAME");
+			
+			// 파일 저장했던 위치에서 첨부파일을 읽어 byte[] 형식으로 변환한다.
+			byte fileByte[] = org.apache.commons.io.FileUtils.readFileToByteArray(new File("C:\\board\\file\\" + storedFileName));
+			
+			response.setContentType("application/octet-stream");
+			response.setContentLength(fileByte.length);
+			response.setHeader("Content-Disposition", "attachment; fileName=\""+URLEncoder.encode(originalFileName, "UTF-8")+"\";");
+			response.getOutputStream().write(fileByte);
+			response.getOutputStream().flush(); //전송하고 데이터를 비워줌
+			response.getOutputStream().close(); // 닫음
 		}
 }

@@ -1,6 +1,7 @@
 package com.my.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -16,4 +17,6 @@ public interface BoardService {
 	public void update (BoardDTO dto) throws Exception;
 	public void delete (int bno) throws Exception;
 	public void hitUpdate (int bno) throws Exception;
+	public List<Map<String, Object>> selectFileList(int bno) throws Exception; // 첨부파일 조회
+	public Map<String, Object> selectFileInfo(Map<String, Object> map) throws Exception; // 첨부파일 다운로드
 }

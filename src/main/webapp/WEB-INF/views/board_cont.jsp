@@ -77,6 +77,12 @@
 		});
 
 	})
+	function fn_fileDown(fileNo){
+		var formObj = $("form[name='readForm']");
+		$("#FILE_NO").attr("value", fileNo);
+		formObj.attr("action", "/fileDown");
+		formObj.submit();
+	}
 </script>
 
 <body>
@@ -96,6 +102,8 @@
  			<input type="hidden" id="perPageNum" name="perPageNum" value="${scri.perPageNum}"> 
   			<input type="hidden" id="searchType" name="searchType" value="${scri.searchType}"> 
   			<input type="hidden" id="keyword" name="keyword" value="${scri.keyword}"> 
+  			<input type="hidden" id="FILE_NO" name="FILE_NO" value=""> 
+			
 		</form>
 	   <table class="table table-borderless">
 	   <c:set var="dto" value="${cont }"></c:set>
@@ -127,7 +135,15 @@
 	      	 	<th>작성일자</th>
 	      	 	<td>${dto.board_regdate }  </td>
 	      	 </tr>
-	    
+	    	 <tr>
+	      	 	<th>파일 목록</th>
+	      	 	<td>
+	      	 	 	<c:forEach var="file" items="${file }"> 
+	      	 	 		<!-- a태그를 클릭하면 해당 href로 이동하지만 onclick을 먼저 수행하고 href로 이동함, onclick에 return false가 있을 경우 href를 수행하지 않음-->
+	      	 	 		<a href="#" onclick="fn_fileDown('${file.FILE_NO}'); return false;">${file.ORG_FILE_NAME }</a>(${file.FILE_SIZE}kb)<br/>
+	      	 	 	</c:forEach>
+	      	 	</td>
+	      	 </tr>	
 	      </c:if>
 	      <c:if test="${empty dto }">
 	    	  <tr>

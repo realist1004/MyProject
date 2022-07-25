@@ -63,6 +63,18 @@ public class  BoardServiceImpl implements BoardService{
 		
 		return boardMapper.listCount(scri);
 	}
+	// 첨부파일 조회
+	@Override
+	public List<Map<String, Object>> selectFileList(int bno) throws Exception {
+		
+		return boardMapper.selectFileList(bno);
+	}
+
+	@Override
+	public Map<String, Object> selectFileInfo(Map<String, Object> map) throws Exception {
+		
+		return boardMapper.selectFileInfo(map);
+	}
 	
 	
 	
