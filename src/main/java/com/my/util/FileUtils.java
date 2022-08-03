@@ -65,6 +65,45 @@ public class FileUtils {
 		}
 		return list;		
 	}
+
+	
+	public List<Map<String, Object>> parseUpdateFileInfo(BoardDTO dto, String[] files, String[] fileNames, MultipartHttpServletRequest boardRequest) throws Exception{
+		Iterator<String> iterator = boardRequest.getFileNames();
+		MultipartFile multipartFile = null;
+		String originalFileName = null;
+		String originalFileExtension = null;
+		String storedFileName = null;
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		Map<String, Object> listMap = null;
+		int board_no = dto.getBoard_no();
+		while(iterator.hasNext()) {
+			multipartFile = boardRequest.getFile(iterator.next());
+			if(multipartFile.isEmpty() == false) { // 추가 첨부파일이 있을경우.
+				originalFileName = multipartFile.getOriginalFilename();
+				originalFileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+				storedFileName = getRandomString() + originalFileExtension;
+				multipartFile.transferTo(new File(filePath + storedFileName));
+				listMap = new HashMap<String, Object>();
+				listMap.put("IS_NEW", "Y");
+				listMap.put("BOARD_NO", board_no);
+				listMap.put("ORG_FILE_NAME", originalFileName);
+				listMap.put("STORED_FILE_NAME", storedFileName);
+				listMap.put("FILE_SIZE", multipartFile.getSize());
+				list.add(listMap);
+			}
+		}
+		if(files != null && fileNames != null) { // 이 for문은 삭제할 파일의 파일 번호와 파일이름을 받게되어있다. 기존 파일 삭제를 누르면  번호, 이름를 받아와 처리
+			for(int i= 0; i<fileNames.length; i++) {
+					listMap = new HashMap<String, Object>();
+					listMap.put("IS_NEW", "N");
+					listMap.put("FILE_NO", files[i]);
+					list.add(listMap);
+			}
+		}
+		return list;
+	}
+	
+	
 	public static String getRandomString() {
 		return UUID.randomUUID().toString().replace("-", ""); // replace("-", "") -를 공백으로 바꿈
 	}

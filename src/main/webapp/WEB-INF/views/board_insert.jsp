@@ -16,6 +16,7 @@
 <script type="text/javascript">
 	 	$(document).ready(function(){
 			var formObj = $("form[name='writeForm']");
+			
 			$(".write_btn").on("click", function(){
 				if(fn_valiChk()){
 					return false;
@@ -24,6 +25,8 @@
 				formObj.attr("method", "post");
 				formObj.submit();
 			});
+			
+			fn_addFile();
 		})
 		function fn_valiChk(){
 			var regForm = $("form[name='writeForm'] .chk").length;
@@ -33,7 +36,18 @@
 					return true;
 				}
 			}
-		} 
+		}
+	 	function fn_addFile(){
+	 		var fileIndex = 1;
+	 		//$("#fileIndex").append("<div><input type='file' style='float:left;' name='file_"+(fileIndex++)+"'>"+"<button type='button' style='float:right;' id='fileAddBtn'>"+"추가"+"</button></div>");
+	 		$(".fileAdd_btn").on("click", function(){
+	 			$("#fileIndex").append("<div><input type='file' style='float:left;' name='file_"+(fileIndex++)+"'>"+"</button>"+"<button type='button' style='float:right;' id='fileDelBtn'>"+"삭제"+"</button></div>");	
+	 		});
+	 		$(document).on("click", "#fileDelBtn", function(){
+	 			$(this).parent().remove();
+	 		});
+	 	}
+	 	
 	</script>
 
 <body>
@@ -65,20 +79,20 @@
 	         	<td>
 	         	   <textarea rows="7" cols="30"  name="board_cont" class="chk" title="글내용을 입력하세요."></textarea>
 	         	</td>
-	         </tr>
-	         <tr>
-	         	<td>
-	         		<input type="file" name="file">
-	         	</td>
-	         </tr>	         
+	         </tr>	         	         
 	         <tr>
 	         	<th>비밀번호</th>
 	         	<td> <input type="password"  name="board_pwd" class="chk" title="비밀번호를 입력하세요."/> </td>
 	         </tr>
 	         <tr>
+	         <tr>
+	         	<td id="fileIndex"></td>
+	         </tr>
+	         <tr>
 	         	<td colspan="2" align="center">
 	         	   <button class="write_btn" type="submit">작성</button>&nbsp;&nbsp;
 	         	   <input type="reset" value="취소" />
+	         	   <button class="fileAdd_btn" type="button">파일추가</button>
 	         	</td>
 	         </tr>
 	         </c:if>

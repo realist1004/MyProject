@@ -81,15 +81,21 @@ public class BoardController {
 	@RequestMapping("board_update.do")
 	public String update(BoardDTO dto,@ModelAttribute("scri") SearchCriteria scri, Model model) throws Exception {
 		logger.info("updateView");
-		model.addAttribute("modify", boardService.read(dto.getBoard_no()));
+		model.addAttribute("update", boardService.read(dto.getBoard_no()));
 		model.addAttribute("scri", scri);
+		
+		List<Map<String, Object>> fileList = boardService.selectFileList(dto.getBoard_no());
+		model.addAttribute("file", fileList);
 		return "board_update";
 	}
 
 	@RequestMapping("updateOk.do")
-	public String updateOk(BoardDTO dto, @ModelAttribute("scri") SearchCriteria scri, RedirectAttributes rttr) throws Exception {
+	public String updateOk(BoardDTO dto, @ModelAttribute("scri") SearchCriteria scri, RedirectAttributes rttr,
+							@RequestParam(value = "fileNoDel[]") String[] files, 
+							@RequestParam(value = "fileNameDel[]") String[] fileNames,
+							MultipartHttpServletRequest boardRuRequest) throws Exception {
 		logger.info("updateOk");
-		boardService.update(dto);
+		boardService.update(dto, files, fileNames, boardRuRequest);
 		rttr.addAttribute("page", scri.getPage());
 		rttr.addAttribute("perPageNum", scri.getPerPageNum());
 		rttr.addAttribute("searchType", scri.getSearchType());
