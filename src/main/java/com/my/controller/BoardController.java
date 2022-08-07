@@ -65,7 +65,7 @@ public class BoardController {
 	@RequestMapping("/board_cont.do")
 	public String cont(BoardDTO dto, @ModelAttribute("scri") SearchCriteria scri , Model model) throws Exception {
 		logger.info("read????");
-		boardService.hitUpdate(dto.getBoard_no());
+		
 		model.addAttribute("cont", boardService.read(dto.getBoard_no()));
 		model.addAttribute("scri", scri);
 		

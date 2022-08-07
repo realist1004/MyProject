@@ -16,7 +16,6 @@ public interface BoardService {
 	public BoardDTO read(int bno) throws Exception;
 	public void update (BoardDTO dto, String[] files, String[] fileNames, MultipartHttpServletRequest boardRequest) throws Exception;
 	public void delete (int bno) throws Exception;
-	public void hitUpdate (int bno) throws Exception;
 	public List<Map<String, Object>> selectFileList(int bno) throws Exception; // 첨부파일 조회
 	public Map<String, Object> selectFileInfo(Map<String, Object> map) throws Exception; // 첨부파일 다운로드	
 }

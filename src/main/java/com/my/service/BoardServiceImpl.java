@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.my.dto.BoardDTO;
@@ -28,7 +29,7 @@ public class  BoardServiceImpl implements BoardService{
 	
 	@Override
 	public BoardDTO read(int bno) throws Exception {
-			
+			boardMapper.hitUpdate(bno);
 		return boardMapper.read(bno);
 	}
 	@Override
@@ -52,11 +53,7 @@ public class  BoardServiceImpl implements BoardService{
 		
 		boardMapper.delete(bno);
 	}
-	@Override
-	public void hitUpdate(int bno) throws Exception {
-		boardMapper.hitUpdate(bno);
-		
-	}
+	
 	// 게시글 작성
 	@Override
 	public void write(BoardDTO dto, MultipartHttpServletRequest boardRequest) throws Exception {
